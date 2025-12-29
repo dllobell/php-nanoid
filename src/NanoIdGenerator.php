@@ -1,0 +1,89 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Dllobell\NanoId;
+
+use Dllobell\NanoId\RandomBytesGenerator\NativeRandomBytesGenerator;
+
+final readonly class NanoIdGenerator
+{
+    private const string DEFAULT_ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-';
+
+    private const int DEFAULT_SIZE = 21;
+
+    private function __construct(
+        private Alphabet $alphabet,
+        private Size $defaultSize,
+        private RandomBytesGenerator $randomBytesGenerator,
+    ) {}
+
+    public static function create(
+        AlphabetValue | string | null $alphabet = null,
+        ?int $defaultSize = null,
+        ?RandomBytesGenerator $randomBytesGenerator = null,
+    ): self {
+        return new self(
+            new Alphabet(self::parseAlphabetValue($alphabet)),
+            new Size($defaultSize ?? self::DEFAULT_SIZE),
+            $randomBytesGenerator ?? new NativeRandomBytesGenerator(),
+        );
+    }
+
+    private static function parseAlphabetValue(AlphabetValue | string | null $alphabet): string
+    {
+        if ($alphabet === null) {
+            return self::DEFAULT_ALPHABET;
+        }
+
+        if ($alphabet instanceof AlphabetValue) {
+            return $alphabet->value();
+        }
+
+        return $alphabet;
+    }
+
+    public function generate(?int $size = null): string
+    {
+        $size = $size !== null ? new Size($size) : $this->defaultSize;
+
+        return $this->alphabet->safeByteCutoff === 256
+            ? $this->generateForPowerOfTwoLengthAlphabet($size)
+            : $this->generateForNonPowerOfTwoLengthAlphabet($size);
+    }
+
+    private function generateForPowerOfTwoLengthAlphabet(Size $size): string
+    {
+        $mask = $this->alphabet->length - 1;
+
+        $bytes = $this->randomBytesGenerator->generate($size->value);
+        for ($i = $size->value - 1, $id = ''; $i >= 0; $i--) {
+            $index = $bytes[$i] & $mask;
+
+            $id .= $this->alphabet->value[$index];
+        }
+
+        return $id;
+    }
+
+    private function generateForNonPowerOfTwoLengthAlphabet(Size $size): string
+    {
+        $step = (int) ceil((1.6 * 256 * $size->value) / $this->alphabet->safeByteCutoff);
+        $id = '';
+        $idLength = 0;
+        while (true) {
+            $bytes = $this->randomBytesGenerator->generate($step);
+
+            for ($i = $step - 1; $i >= 0; $i--) {
+                $byte = $bytes[$i];
+                if ($byte < $this->alphabet->safeByteCutoff) {
+                    $id .= $this->alphabet->value[$byte % $this->alphabet->length];
+                    $idLength++;
+                    if ($idLength === $size->value) {
+                        return $id;
+                    }
+                }
+            }
+        }
+    }
+}
