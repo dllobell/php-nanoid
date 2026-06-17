@@ -86,7 +86,7 @@ enum MyAlphabets: string implements AlphabetProvider
     case Lowercase = 'abcdefghijklmnopqrstuvwxyz';
     case Numeric = '0123456789';
 
-    public function value(): string
+    public function alphabet(): string
     {
         return $this->value;
     }

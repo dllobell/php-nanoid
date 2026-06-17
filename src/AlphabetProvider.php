@@ -6,5 +6,5 @@ namespace Dllobell\NanoId;
 
 interface AlphabetProvider
 {
-    public function value(): string;
+    public function alphabet(): string;
 }

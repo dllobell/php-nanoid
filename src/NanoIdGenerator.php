@@ -41,7 +41,7 @@ final readonly class NanoIdGenerator
         }
 
         if ($alphabet instanceof AlphabetProvider) {
-            return $alphabet->value();
+            return $alphabet->alphabet();
         }
 
         return $alphabet;

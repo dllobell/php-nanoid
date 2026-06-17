@@ -19,7 +19,7 @@ enum AlphabetEnum: string implements AlphabetProvider
 {
     case Numeric = '0123456789';
 
-    public function value(): string
+    public function alphabet(): string
     {
         return $this->value;
     }
@@ -68,7 +68,7 @@ describe('NanoIdGenerator', function (): void {
     it('generates an ID from an AlphabetProvider class', function (): void {
         $alphabet = new class implements AlphabetProvider
         {
-            public function value(): string
+            public function alphabet(): string
             {
                 return '0123456789';
             }
