@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dllobell\NanoId;
 
 use Dllobell\NanoId\RandomBytesGenerator\NativeRandomBytesGenerator;
+use BackedEnum;
 use InvalidArgumentException;
 
 final readonly class NanoIdGenerator
@@ -23,7 +24,7 @@ final readonly class NanoIdGenerator
      * @throws InvalidArgumentException
      */
     public static function create(
-        AlphabetProvider | string | null $alphabet = null,
+        AlphabetProvider | BackedEnum | string | null $alphabet = null,
         ?int $defaultSize = null,
         ?RandomBytesGenerator $randomBytesGenerator = null,
     ): self {
@@ -34,7 +35,10 @@ final readonly class NanoIdGenerator
         );
     }
 
-    private static function parseAlphabet(AlphabetProvider | string | null $alphabet): string
+    /**
+     * @throws InvalidArgumentException
+     */
+    private static function parseAlphabet(AlphabetProvider | BackedEnum | string | null $alphabet): string
     {
         if ($alphabet === null) {
             return self::DEFAULT_ALPHABET;
@@ -42,6 +46,16 @@ final readonly class NanoIdGenerator
 
         if ($alphabet instanceof AlphabetProvider) {
             return $alphabet->alphabet();
+        }
+
+        if ($alphabet instanceof BackedEnum) {
+            $value = $alphabet->value;
+
+            if (!is_string($value)) {
+                throw new InvalidArgumentException('Alphabet backed enum must be string-backed.');
+            }
+
+            return $value;
         }
 
         return $alphabet;

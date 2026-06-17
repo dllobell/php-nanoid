@@ -72,9 +72,26 @@ $id = $generator->generate(5); // "8ё56а"
 
 > **Note:** Alphabets must be valid UTF-8 and contain between 2 and 256 unique characters. Duplicate characters are not allowed. The 256-character limit counts Unicode code points (PHP) rather than UTF-16 code units (JavaScript). For typical alphabets such as ASCII or Cyrillic, the limit is identical; astral characters (for example, emoji) count as one character in PHP but two in JavaScript.
 
+#### Using backed enums
+
+You can pass a string-backed enum directly as the alphabet:
+
+```php
+use Dllobell\NanoId\NanoIdGenerator;
+
+enum Digits: string
+{
+    case Numeric = '0123456789';
+}
+
+$generator = NanoIdGenerator::create(alphabet: Digits::Numeric);
+```
+
+Int-backed enums are not supported and will throw an `InvalidArgumentException`.
+
 #### Using the `AlphabetProvider` interface
 
-You can pass an object implementing the `AlphabetProvider` interface. This is particularly useful when using enums to create custom alphabet sets:
+You can pass an object implementing the `AlphabetProvider` interface. This is useful for non-enum types or when you need custom alphabet resolution logic:
 
 ```php
 use Dllobell\NanoId\AlphabetProvider;

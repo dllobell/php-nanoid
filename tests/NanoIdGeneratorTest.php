@@ -25,6 +25,16 @@ enum AlphabetEnum: string implements AlphabetProvider
     }
 }
 
+enum PlainAlphabet: string
+{
+    case Numeric = '0123456789';
+}
+
+enum IntAlphabet: int
+{
+    case One = 1;
+}
+
 covers(NanoIdGenerator::class);
 
 describe('NanoIdGenerator', function (): void {
@@ -63,6 +73,20 @@ describe('NanoIdGenerator', function (): void {
         $id = $generator->generate(10);
 
         expect($id)->toHaveLength(10)->toMatch('/^[0-9]+$/');
+    });
+
+    it('generates an ID from a plain backed enum', function (): void {
+        $generator = NanoIdGenerator::create(alphabet: PlainAlphabet::Numeric);
+
+        $id = $generator->generate(10);
+
+        expect($id)->toHaveLength(10)->toMatch('/^[0-9]+$/');
+    });
+
+    it('throws an exception for an int-backed enum alphabet', function (): void {
+        expect(fn () => NanoIdGenerator::create(alphabet: IntAlphabet::One))
+            ->toThrow(InvalidArgumentException::class, 'Alphabet backed enum must be string-backed.')
+        ;
     });
 
     it('generates an ID from an AlphabetProvider class', function (): void {
