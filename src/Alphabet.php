@@ -24,6 +24,9 @@ final readonly class Alphabet
 
     public int $safeByteCutoff;
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function __construct(string $value)
     {
         $this->validateEncoding($value);

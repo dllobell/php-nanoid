@@ -11,6 +11,9 @@ use InvalidArgumentException;
  */
 final readonly class Size
 {
+    /**
+     * @throws InvalidArgumentException
+     */
     public function __construct(public int $value)
     {
         if ($this->value <= 0) {

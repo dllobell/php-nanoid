@@ -18,6 +18,11 @@ final readonly class NativeRandomBytesGenerator implements RandomBytesGenerator
         $this->randomizer = new Randomizer($engine);
     }
 
+    /**
+     * @return list<int>
+     *
+     * @throws RuntimeException
+     */
     public function generate(int $size): array
     {
         /** @var array<int, int>|false */

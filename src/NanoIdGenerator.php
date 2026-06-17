@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dllobell\NanoId;
 
 use Dllobell\NanoId\RandomBytesGenerator\NativeRandomBytesGenerator;
+use InvalidArgumentException;
 
 final readonly class NanoIdGenerator
 {
@@ -18,6 +19,9 @@ final readonly class NanoIdGenerator
         private RandomBytesGenerator $randomBytesGenerator,
     ) {}
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public static function create(
         AlphabetValue | string | null $alphabet = null,
         ?int $defaultSize = null,
@@ -43,6 +47,9 @@ final readonly class NanoIdGenerator
         return $alphabet;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function generate(?int $size = null): string
     {
         $size = $size !== null ? new Size($size) : $this->defaultSize;
