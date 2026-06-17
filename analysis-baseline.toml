@@ -1,0 +1,19 @@
+variant = "loose"
+
+[[issues]]
+file = "tests/NanoIdGeneratorTest.php"
+code = "falsable-return-statement"
+message = "Function `{closure:tests/NanoIdGeneratorTest.php:15:34}` is declared to return `string` but possibly returns 'false' (inferred as `false|string`)."
+count = 1
+
+[[issues]]
+file = "tests/NanoIdGeneratorTest.php"
+code = "invalid-return-statement"
+message = "Invalid return type for function `{anonymous-class:tests/NanoIdGeneratorTest.php:126:33}::generate`: expected `list<int>`, but found `non-empty-array<int, int(0)|int(255)>`."
+count = 1
+
+[[issues]]
+file = "tests/NanoIdGeneratorTest.php"
+code = "invalid-return-statement"
+message = "Invalid return type for function `{closure:tests/NanoIdGeneratorTest.php:15:34}`: expected `string`, but found `false|string`."
+count = 1

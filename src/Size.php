@@ -12,12 +12,19 @@ use InvalidArgumentException;
 final readonly class Size
 {
     /**
+     * @var positive-int
+     */
+    public int $value;
+
+    /**
      * @throws InvalidArgumentException
      */
-    public function __construct(public int $value)
+    public function __construct(int $value)
     {
-        if ($this->value <= 0) {
+        if ($value <= 0) {
             throw new InvalidArgumentException('Size must be a positive integer.');
         }
+
+        $this->value = $value;
     }
 }

@@ -1,0 +1,35 @@
+#:schema https://mago.carthage.software/1.30.0/schema.json
+version = "1"
+php-version = "8.4"
+
+[source]
+paths = ["src", "tests"]
+includes = ["vendor"]
+
+[source.glob]
+literal-separator = true
+
+[analyzer]
+baseline = "analysis-baseline.toml"
+baseline-variant = "strict"
+
+find-unused-expressions = true
+find-unused-definitions = true
+find-overly-wide-return-types = true
+analyze-dead-code = true
+check-throws = false
+check-missing-override = false
+find-unused-parameters = true
+check-missing-type-hints = true
+check-closure-missing-type-hints = true
+check-arrow-function-missing-type-hints = true
+enforce-class-finality = true
+require-api-or-internal = false
+check-experimental = true
+strict-list-index-checks = true
+strict-array-index-existence = false
+no-boolean-literal-comparison = true
+trust-existence-checks = false
+check-use-statements = true
+check-property-initialization = true
+allow-side-effects-in-conditions = false

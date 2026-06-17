@@ -7,6 +7,7 @@ namespace Dllobell\NanoId;
 use BackedEnum;
 use Dllobell\NanoId\RandomBytesGenerator\NativeRandomBytesGenerator;
 use InvalidArgumentException;
+use LogicException;
 
 final readonly class NanoIdGenerator
 {
@@ -63,6 +64,7 @@ final readonly class NanoIdGenerator
 
     /**
      * @throws InvalidArgumentException
+     * @throws LogicException
      */
     public function generate(?int $size = null): string
     {
@@ -87,9 +89,17 @@ final readonly class NanoIdGenerator
         return $id;
     }
 
+    /**
+     * @throws LogicException
+     */
     private function generateForNonPowerOfTwoLengthAlphabet(Size $size): string
     {
         $step = (int) ceil((1.6 * 256 * $size->value) / $this->alphabet->safeByteCutoff);
+
+        if ($step <= 0) {
+            throw new LogicException('Calculated batch step must be positive.');
+        }
+
         $id = '';
         $idLength = 0;
         while (true) {

@@ -40,6 +40,9 @@ final readonly class Alphabet
         $this->safeByteCutoff = 256 - (256 % $this->length);
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     private function validateEncoding(string $value): void
     {
         if (!mb_check_encoding($value, encoding: 'UTF-8')) {
@@ -47,6 +50,9 @@ final readonly class Alphabet
         }
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     private function validateLength(): void
     {
         if ($this->length < self::MIN_LENGTH) {
@@ -62,6 +68,9 @@ final readonly class Alphabet
         }
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     private function validateNoDuplicates(): void
     {
         if ($this->length !== count(array_unique($this->characters, SORT_STRING))) {

@@ -20,6 +20,7 @@
         "ext-mbstring": "*"
     },
     "require-dev": {
+        "carthage-software/mago": "^1.0",
         "eolica/coding-standard": "^2.0",
         "laravel/pao": "^1.0",
         "pestphp/pest": "^4.0",

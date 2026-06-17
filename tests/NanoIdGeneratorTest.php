@@ -84,7 +84,7 @@ describe('NanoIdGenerator', function (): void {
     });
 
     it('throws an exception for an int-backed enum alphabet', function (): void {
-        expect(fn () => NanoIdGenerator::create(alphabet: IntAlphabet::One))
+        expect(fn (): NanoIdGenerator => NanoIdGenerator::create(alphabet: IntAlphabet::One))
             ->toThrow(InvalidArgumentException::class, 'Alphabet backed enum must be string-backed.')
         ;
     });
@@ -108,6 +108,9 @@ describe('NanoIdGenerator', function (): void {
     it('uses custom RandomBytesGenerator', function (): void {
         $randomBytesGenerator = new class implements RandomBytesGenerator
         {
+            /**
+             * @param positive-int $size
+             */
             public function generate(int $size): array
             {
                 return array_fill(0, $size, 0);
@@ -122,6 +125,9 @@ describe('NanoIdGenerator', function (): void {
     it('processes every byte in a rejection sampling batch including index zero', function (): void {
         $randomBytesGenerator = new class implements RandomBytesGenerator
         {
+            /**
+             * @param positive-int $size
+             */
             public function generate(int $size): array
             {
                 return array_merge([0], array_fill(1, $size - 1, 255));
@@ -139,27 +145,27 @@ describe('NanoIdGenerator', function (): void {
     it('throws an exception for non-positive size', function (): void {
         $generator = NanoIdGenerator::create();
 
-        expect(fn () => $generator->generate(0))->toThrow(InvalidArgumentException::class);
-        expect(fn () => $generator->generate(fake()->numberBetween(PHP_INT_MIN, -1)))->toThrow(InvalidArgumentException::class);
+        expect(fn (): string => $generator->generate(0))->toThrow(InvalidArgumentException::class);
+        expect(fn (): string => $generator->generate(fake()->numberBetween(PHP_INT_MIN, -1)))->toThrow(InvalidArgumentException::class);
     });
 
     it('throws an exception for non-positive default size', function (): void {
-        expect(fn () => NanoIdGenerator::create(defaultSize: 0))
+        expect(fn (): NanoIdGenerator => NanoIdGenerator::create(defaultSize: 0))
             ->toThrow(InvalidArgumentException::class, 'Size must be a positive integer.')
         ;
-        expect(fn () => NanoIdGenerator::create(defaultSize: fake()->numberBetween(PHP_INT_MIN, -1)))
+        expect(fn (): NanoIdGenerator => NanoIdGenerator::create(defaultSize: fake()->numberBetween(PHP_INT_MIN, -1)))
             ->toThrow(InvalidArgumentException::class, 'Size must be a positive integer.')
         ;
     });
 
     it('throws an exception for an empty alphabet', function (): void {
-        expect(fn () => NanoIdGenerator::create(alphabet: ''))
+        expect(fn (): NanoIdGenerator => NanoIdGenerator::create(alphabet: ''))
             ->toThrow(InvalidArgumentException::class, 'Alphabet must contain at least 2 characters.')
         ;
     });
 
     it('throws an exception for an alphabet with less than 2 characters', function (): void {
-        expect(fn () => NanoIdGenerator::create(alphabet: 'a'))
+        expect(fn (): NanoIdGenerator => NanoIdGenerator::create(alphabet: 'a'))
             ->toThrow(InvalidArgumentException::class, 'Alphabet must contain at least 2 characters.')
         ;
     });
@@ -167,13 +173,13 @@ describe('NanoIdGenerator', function (): void {
     it('throws an exception for alphabet with more than 256 characters', function (): void {
         $alphabet = str_repeat('a', fake()->numberBetween(257, 300));
 
-        expect(fn () => NanoIdGenerator::create(alphabet: $alphabet))
+        expect(fn (): NanoIdGenerator => NanoIdGenerator::create(alphabet: $alphabet))
             ->toThrow(InvalidArgumentException::class, 'Alphabet must not exceed 256 characters.')
         ;
     });
 
     it('throws an exception for alphabet with duplicate characters', function (): void {
-        expect(fn () => NanoIdGenerator::create(alphabet: 'aab'))
+        expect(fn (): NanoIdGenerator => NanoIdGenerator::create(alphabet: 'aab'))
             ->toThrow(InvalidArgumentException::class, 'Alphabet must not contain duplicate characters.')
         ;
     });
@@ -195,19 +201,19 @@ describe('NanoIdGenerator', function (): void {
     });
 
     it('throws an exception for alphabet with more than 256 Unicode characters', function (): void {
-        expect(fn () => NanoIdGenerator::create(alphabet: cyrillicAlphabet(257)))
+        expect(fn (): NanoIdGenerator => NanoIdGenerator::create(alphabet: cyrillicAlphabet(257)))
             ->toThrow(InvalidArgumentException::class, 'Alphabet must not exceed 256 characters.')
         ;
     });
 
     it('throws an exception for alphabet with duplicate Unicode characters', function (): void {
-        expect(fn () => NanoIdGenerator::create(alphabet: 'абвгдеёа'))
+        expect(fn (): NanoIdGenerator => NanoIdGenerator::create(alphabet: 'абвгдеёа'))
             ->toThrow(InvalidArgumentException::class, 'Alphabet must not contain duplicate characters.')
         ;
     });
 
     it('throws an exception for invalid UTF-8 alphabet', function (): void {
-        expect(fn () => NanoIdGenerator::create(alphabet: "\xC3\x28"))
+        expect(fn (): NanoIdGenerator => NanoIdGenerator::create(alphabet: "\xC3\x28"))
             ->toThrow(InvalidArgumentException::class, 'Alphabet must be valid UTF-8.')
         ;
     });
