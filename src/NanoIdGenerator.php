@@ -23,24 +23,24 @@ final readonly class NanoIdGenerator
      * @throws InvalidArgumentException
      */
     public static function create(
-        AlphabetValue | string | null $alphabet = null,
+        AlphabetProvider | string | null $alphabet = null,
         ?int $defaultSize = null,
         ?RandomBytesGenerator $randomBytesGenerator = null,
     ): self {
         return new self(
-            new Alphabet(self::parseAlphabetValue($alphabet)),
+            new Alphabet(self::parseAlphabet($alphabet)),
             new Size($defaultSize ?? self::DEFAULT_SIZE),
             $randomBytesGenerator ?? new NativeRandomBytesGenerator(),
         );
     }
 
-    private static function parseAlphabetValue(AlphabetValue | string | null $alphabet): string
+    private static function parseAlphabet(AlphabetProvider | string | null $alphabet): string
     {
         if ($alphabet === null) {
             return self::DEFAULT_ALPHABET;
         }
 
-        if ($alphabet instanceof AlphabetValue) {
+        if ($alphabet instanceof AlphabetProvider) {
             return $alphabet->value();
         }
 

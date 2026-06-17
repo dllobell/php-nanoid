@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dllobell\NanoId;
 
-interface AlphabetValue
+interface AlphabetProvider
 {
     public function value(): string;
 }

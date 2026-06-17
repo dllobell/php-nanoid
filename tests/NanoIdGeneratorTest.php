@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Dllobell\NanoId\AlphabetValue;
+use Dllobell\NanoId\AlphabetProvider;
 use Dllobell\NanoId\NanoIdGenerator;
 use Dllobell\NanoId\RandomBytesGenerator;
 use Dllobell\NanoId\RandomBytesGenerator\NativeRandomBytesGenerator;
@@ -15,7 +15,7 @@ function cyrillicAlphabet(int $count): string
     return implode('', array_map(static fn (int $i): string => mb_chr(0x0430 + $i, encoding: 'UTF-8'), range(0, $count - 1)));
 }
 
-enum AlphabetEnum: string implements AlphabetValue
+enum AlphabetEnum: string implements AlphabetProvider
 {
     case Numeric = '0123456789';
 
@@ -57,7 +57,7 @@ describe('NanoIdGenerator', function (): void {
         expect($id)->toHaveLength(21)->toMatch('/^[abc]+$/');
     });
 
-    it('generates an ID from an AlphabetValue enum', function (): void {
+    it('generates an ID from an AlphabetProvider enum', function (): void {
         $generator = NanoIdGenerator::create(alphabet: AlphabetEnum::Numeric);
 
         $id = $generator->generate(10);
@@ -65,8 +65,8 @@ describe('NanoIdGenerator', function (): void {
         expect($id)->toHaveLength(10)->toMatch('/^[0-9]+$/');
     });
 
-    it('generates an ID from an AlphabetValue class', function (): void {
-        $alphabet = new class implements AlphabetValue
+    it('generates an ID from an AlphabetProvider class', function (): void {
+        $alphabet = new class implements AlphabetProvider
         {
             public function value(): string
             {

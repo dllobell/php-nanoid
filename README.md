@@ -72,15 +72,15 @@ $id = $generator->generate(5); // "8ё56а"
 
 > **Note:** Alphabets must be valid UTF-8 and contain between 2 and 256 unique characters. Duplicate characters are not allowed. The 256-character limit counts Unicode code points (PHP) rather than UTF-16 code units (JavaScript). For typical alphabets such as ASCII or Cyrillic, the limit is identical; astral characters (for example, emoji) count as one character in PHP but two in JavaScript.
 
-#### Using the `AlphabetValue` interface
+#### Using the `AlphabetProvider` interface
 
-You can pass an object implementing the `AlphabetValue` interface. This is particularly useful when using enums to create custom alphabet sets:
+You can pass an object implementing the `AlphabetProvider` interface. This is particularly useful when using enums to create custom alphabet sets:
 
 ```php
-use Dllobell\NanoId\AlphabetValue;
+use Dllobell\NanoId\AlphabetProvider;
 use Dllobell\NanoId\NanoIdGenerator;
 
-enum MyAlphabets: string implements AlphabetValue
+enum MyAlphabets: string implements AlphabetProvider
 {
     case Uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     case Lowercase = 'abcdefghijklmnopqrstuvwxyz';
@@ -103,7 +103,7 @@ If you want to use a set of predefined alphabets or manage your own via `compose
 composer require dllobell/nanoid-plugin
 ```
 
-This plugin automatically generates an `Alphabets` enum that implements the `AlphabetValue` interface whenever you run `composer install`, `update`, or `dump-autoload`.
+This plugin automatically generates an `Alphabets` enum that implements the `AlphabetProvider` interface whenever you run `composer install`, `update`, or `dump-autoload`.
 
 You can also trigger the generation manually using the following command:
 
