@@ -16,7 +16,8 @@
     ],
     "homepage": "https://github.com/dllobell/php-nanoid",
     "require": {
-        "php": "^8.4"
+        "php": "^8.4",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "eolica/coding-standard": "^2.0",

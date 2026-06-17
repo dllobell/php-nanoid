@@ -10,6 +10,11 @@ use Random\Engine\Mt19937;
 
 use function Pest\Faker\fake;
 
+function cyrillicAlphabet(int $count): string
+{
+    return implode('', array_map(static fn (int $i): string => mb_chr(0x0430 + $i, encoding: 'UTF-8'), range(0, $count - 1)));
+}
+
 enum AlphabetEnum: string implements AlphabetValue
 {
     case Numeric = '0123456789';
@@ -149,6 +154,40 @@ describe('NanoIdGenerator', function (): void {
         ;
     });
 
+    it('generates an ID with a Unicode alphabet', function (): void {
+        $alphabet = '0123456789абвгдеё';
+        $generator = NanoIdGenerator::create(alphabet: $alphabet);
+
+        $id = $generator->generate(5);
+
+        expect($id)->toHaveLength(5);
+        expect(mb_str_split($id, encoding: 'UTF-8'))->each->toBeIn(mb_str_split($alphabet, encoding: 'UTF-8'));
+    });
+
+    it('accepts an alphabet with up to 256 Unicode characters', function (): void {
+        $generator = NanoIdGenerator::create(alphabet: cyrillicAlphabet(200));
+
+        expect($generator->generate(10))->toHaveLength(10);
+    });
+
+    it('throws an exception for alphabet with more than 256 Unicode characters', function (): void {
+        expect(fn () => NanoIdGenerator::create(alphabet: cyrillicAlphabet(257)))
+            ->toThrow(InvalidArgumentException::class, 'Alphabet must not exceed 256 characters.')
+        ;
+    });
+
+    it('throws an exception for alphabet with duplicate Unicode characters', function (): void {
+        expect(fn () => NanoIdGenerator::create(alphabet: 'абвгдеёа'))
+            ->toThrow(InvalidArgumentException::class, 'Alphabet must not contain duplicate characters.')
+        ;
+    });
+
+    it('throws an exception for invalid UTF-8 alphabet', function (): void {
+        expect(fn () => NanoIdGenerator::create(alphabet: "\xC3\x28"))
+            ->toThrow(InvalidArgumentException::class, 'Alphabet must be valid UTF-8.')
+        ;
+    });
+
     it('generates matching ids for golden examples', function (int $seed, string $expectedId): void {
         $generator = NanoIdGenerator::create(
             randomBytesGenerator: new NativeRandomBytesGenerator(
@@ -178,5 +217,20 @@ describe('NanoIdGenerator', function (): void {
         'seed 0' => [0, 'caabcbbcbaaabcbacbaaa'],
         'seed 42' => [42, 'baccccacacbaccbabbbcc'],
         'seed 123456' => [123456, 'abbbcbbaccacbaaabcbbc'],
+    ]);
+
+    it('generates matching ids for Unicode alphabet golden examples', function (int $seed, string $expectedId): void {
+        $generator = NanoIdGenerator::create(
+            alphabet: '0123456789абвгдеё',
+            randomBytesGenerator: new NativeRandomBytesGenerator(
+                engine: new Mt19937(seed: $seed),
+            ),
+        );
+
+        expect($generator->generate())->toBe($expectedId);
+    })->with([
+        'seed 0' => [0, 'б9в86136ё8е9дг1а9ёвё0'],
+        'seed 42' => [42, 'а0ёёа30д41в0830д64в7г'],
+        'seed 123456' => [123456, '16ввг98761а671е4658д4'],
     ]);
 });

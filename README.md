@@ -14,6 +14,7 @@ Nano ID is a tiny, secure, URL-friendly, unique string ID generator, ported from
 ## Requirements
 
 - PHP 8.4 or higher
+- [mbstring](https://www.php.net/manual/en/book.mbstring.php) extension
 
 ## Installation
 
@@ -61,7 +62,15 @@ $generator = NanoIdGenerator::create(alphabet: '0123456789');
 $id = $generator->generate(); // "857201493620581749302"
 ```
 
-> **Note:** Alphabets must contain between 2 and 256 unique characters. Duplicate characters are not allowed.
+Unicode characters are supported in custom alphabets:
+
+```php
+$generator = NanoIdGenerator::create(alphabet: '0123456789абвгдеё');
+
+$id = $generator->generate(5); // "8ё56а"
+```
+
+> **Note:** Alphabets must be valid UTF-8 and contain between 2 and 256 unique characters. Duplicate characters are not allowed. The 256-character limit counts Unicode code points (PHP) rather than UTF-16 code units (JavaScript). For typical alphabets such as ASCII or Cyrillic, the limit is identical; astral characters (for example, emoji) count as one character in PHP but two in JavaScript.
 
 #### Using the `AlphabetValue` interface
 

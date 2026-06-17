@@ -15,18 +15,33 @@ final readonly class Alphabet
 
     private const int MAX_LENGTH = 256;
 
+    /**
+     * @var list<string>
+     */
+    public array $characters;
+
     public int $length;
 
     public int $safeByteCutoff;
 
-    public function __construct(public string $value)
+    public function __construct(string $value)
     {
-        $this->length = strlen($value);
+        $this->validateEncoding($value);
+
+        $this->characters = mb_str_split($value, encoding: 'UTF-8');
+        $this->length = count($this->characters);
 
         $this->validateLength();
         $this->validateNoDuplicates();
 
         $this->safeByteCutoff = 256 - (256 % $this->length);
+    }
+
+    private function validateEncoding(string $value): void
+    {
+        if (!mb_check_encoding($value, encoding: 'UTF-8')) {
+            throw new InvalidArgumentException('Alphabet must be valid UTF-8.');
+        }
     }
 
     private function validateLength(): void
@@ -46,7 +61,7 @@ final readonly class Alphabet
 
     private function validateNoDuplicates(): void
     {
-        if ($this->length !== count(array_unique(str_split($this->value)))) {
+        if ($this->length !== count(array_unique($this->characters, SORT_STRING))) {
             throw new InvalidArgumentException('Alphabet must not contain duplicate characters.');
         }
     }

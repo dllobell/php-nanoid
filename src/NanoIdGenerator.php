@@ -60,7 +60,7 @@ final readonly class NanoIdGenerator
         for ($i = $size->value - 1, $id = ''; $i >= 0; $i--) {
             $index = $bytes[$i] & $mask;
 
-            $id .= $this->alphabet->value[$index];
+            $id .= $this->alphabet->characters[$index];
         }
 
         return $id;
@@ -77,7 +77,7 @@ final readonly class NanoIdGenerator
             for ($i = $step - 1; $i >= 0; $i--) {
                 $byte = $bytes[$i];
                 if ($byte < $this->alphabet->safeByteCutoff) {
-                    $id .= $this->alphabet->value[$byte % $this->alphabet->length];
+                    $id .= $this->alphabet->characters[$byte % $this->alphabet->length];
                     $idLength++;
                     if ($idLength === $size->value) {
                         return $id;
