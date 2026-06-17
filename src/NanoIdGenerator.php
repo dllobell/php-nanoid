@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Dllobell\NanoId;
 
-use Dllobell\NanoId\RandomBytesGenerator\NativeRandomBytesGenerator;
 use BackedEnum;
+use Dllobell\NanoId\RandomBytesGenerator\NativeRandomBytesGenerator;
 use InvalidArgumentException;
 
 final readonly class NanoIdGenerator
